@@ -3,7 +3,7 @@
 # Copyright 2019 Quentin Kniep <hello@quentinkniep.com>
 # Distributed under terms of the MIT license.
 
-from bottle import route, run, template, view
+from bottle import redirect, route, run, template, view
 from googleapiclient.discovery import build
 from threading import Thread
 import urllib.parse
@@ -76,19 +76,14 @@ def download(ytid):
 @route('/search/<keyword>')
 @view('templates/results')
 def index(keyword):
-    vids = youtube_search(keyword, 20)
+    vids = youtube_search(keyword, 50)
     return dict(videos=vids, header='Search Results', subheader='For: '+keyword)
-
-
-@route('/video/<ytid>/<title>')
-def index(ytid, title):
-    return template('<b>Title: {{title}}</b>!', title=title)
 
 
 @route('/rec/<ytid>/<title>')
 @view('templates/results')
 def index(ytid, title):
-    vids = youtube_search(ytid, 20, True)
+    vids = youtube_search(ytid, 50, True)
     return dict(videos=vids, header='Recommendations', subheader='Based on: '+title)
 
 
@@ -103,13 +98,18 @@ def index(ytid, title):
 def index(ytid):
     global queue
     queue = list(filter(lambda x: x[0] != ytid, queue))
-    return dict()
+    return redirect('/')
 
 
-@route('/queue')
+@route('/')
 @view('templates/main')
 def index():
     return dict(videos=queue, numVids=len(queue), current=currentlyPlaying, volume=int(player.volume))
+
+
+@route('/skip')
+def index():
+    return redirect('/')
 
 
 @route('/volume/<vol>')
@@ -118,7 +118,8 @@ def index(vol):
         player.volume = player.volume_max
     else:
         player.volume = vol
-    return template('volume set to {{vol}}%', vol=int(player.volume))
+    #return template('volume set to {{vol}}%', vol=int(player.volume))
+    return redirect('/')
 
 
 def play(ytid):
@@ -141,5 +142,5 @@ def playLoop():
 if __name__ == '__main__':
     t = Thread(target=playLoop)
     t.start()
-    pafy.set_api_key(YOUTUBE_API_KEY)
+    #pafy.set_api_key(cfg.YOUTUBE_API_KEY)
     run(host=cfg.HOST_NAME, port=cfg.PORT_NUMBER)

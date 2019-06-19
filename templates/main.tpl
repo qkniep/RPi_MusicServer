@@ -1,8 +1,11 @@
 % rebase('templates/base.tpl', title='Queue')
 <div style="padding-left:20px">
-	<h4 style="display:inline-block">Currently Playing: {{current[1]}}
-	</h4><br />
+	<h4 style="display:inline-block">Currently Playing: {{current[1]}}</h4>
+	<a href="/skip"><i class="material-icons">skip_next</i></a>
+	<br />
+	<a href="/volume/{{volume-10}}"><i class="material-icons">remove</i></a>
 	Volume: {{volume}}%
+	<a href="/volume/{{volume+10}}"><i class="material-icons">add</i></a>
 </div>
 <ul class="collection with-header">
 	<li class="collection-header"><h4>Queue ({{numVids}} Songs)</h4></li>
