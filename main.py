@@ -31,6 +31,9 @@ sitcomEffects = [
         'n67YJ7ICh_Q',  # karnevals tusch
         '5jcOgP-zeTg',  # gasp
         'y1U6g-kJ5og',  # booing
+        'HnK28w1soPg',  # Kim Possible
+        'cphNpqKpKc4',  # dun dun dunnn
+        'Q100Dgdl_rU',  # sarcastic laugh
         'Gyu82WG_edM'   # clapping
 ]
 
@@ -118,7 +121,6 @@ def index(vol):
         player.volume = player.volume_max
     else:
         player.volume = vol
-    #return template('volume set to {{vol}}%', vol=int(player.volume))
     return redirect('/')
 
 
