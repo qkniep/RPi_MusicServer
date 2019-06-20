@@ -7,10 +7,10 @@
 	Volume: {{volume}}%
 	<a href="/volume/{{volume+10}}"><i class="material-icons">add</i></a>
 </div>
-<ul class="collection with-header">
-	<li class="collection-header"><h4>Queue ({{numVids}} Songs)</h4></li>
+<ul class="collection with-header" style="border-color: transparent">
+	<li class="collection-header grey darken-4"><h4>Queue ({{numVids}} Songs)</h4></li>
 	%for vid in videos:
-		<li class="collection-item"><div>
+		<li class="collection-item grey darken-4" style="border-bottom-color: transparent"><div>
 			<img src="https://img.youtube.com/vi/{{vid[0]}}/default.jpg">
 			<span class="title">{{vid[1]}}</span>
 			<a href="/remove/{{vid[0]}}" class="secondary-content"><i class="material-icons">remove_circle</i></a>

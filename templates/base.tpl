@@ -7,7 +7,7 @@
 	<title>{{title or 'No title'}}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
-<body>
+<body class="grey darken-4 white-text">
 	<nav class="light-green">
 		<!--a href="/queue" class="brand-logo"><i class="material-icons">home</i></a-->
 		<div class="nav-wrapper">
