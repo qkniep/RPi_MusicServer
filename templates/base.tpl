@@ -28,12 +28,24 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 	<script>
-	$(document).ready(function() {
-		$('#searchForm').submit(function(){
-			var query = $('#search').val();
-			$(this).attr('action', "/search/" + query);
+		$(document).ready(function() {
+			$('#searchForm').submit(function(){
+				var query = $('#search').val();
+				$(this).attr('action', "/search/" + query);
+			});
 		});
-	});
+	</script>
+	<script>
+		$('.collection-item').hover(
+			function(){
+				$(this).removeClass('darken-4')
+				$(this).addClass('darken-3')
+			},
+			function(){
+				$(this).removeClass('darken-3')
+				$(this).addClass('darken-4')
+			}
+		);
 	</script>
 </body>
 </html>

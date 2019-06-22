@@ -6,11 +6,12 @@
 from bottle import redirect, route, run, template, view
 from googleapiclient.discovery import build
 from threading import Thread
-import urllib.parse
+
 import mpv
 import pafy
 import random
 import time
+import urllib.parse
 
 import cfg
 
@@ -84,6 +85,12 @@ def download(ytid):
     return filename
 
 
+@route('/')
+@view('templates/main')
+def index():
+    return dict(videos=queue, numVids=len(queue), current=currentlyPlaying, volume=int(player.volume))
+
+
 @route('/search/<keyword>')
 @view('templates/results')
 def index(keyword):
@@ -94,7 +101,7 @@ def index(keyword):
 @route('/rec/<ytid>/<title>')
 @view('templates/results')
 def index(ytid, title):
-    vids = youtube_search(ytid, 50, True)
+    vids = youtube_search(ytid, 50, recs=True)
     return dict(videos=vids, header='Recommendations', subheader='Based on: '+urlDec(title))
 
 
@@ -110,12 +117,6 @@ def index(ytid):
     global queue
     queue = list(filter(lambda x: x[0] != ytid, queue))
     return redirect('/')
-
-
-@route('/')
-@view('templates/main')
-def index():
-    return dict(videos=queue, numVids=len(queue), current=currentlyPlaying, volume=int(player.volume))
 
 
 @route('/skip')
