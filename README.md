@@ -24,4 +24,4 @@ $ nohup supervise musicServer &
 The `nohup` command prevents the server from shutting down when you log out of the shell that launched it. Whereas the `supervise` command will automatically relaunch the server if/when it crashes. Therefore the command above should lead to the server being up until explicitly decide to kill the program.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
