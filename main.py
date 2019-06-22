@@ -38,6 +38,14 @@ sitcomEffects = [
 ]
 
 
+def urlEnc(title):
+    return urllib.parse.quote(urllib.parse.quote(title, safe=''))
+
+
+def urlDec(title):
+    return urllib.parse.unquote(urllib.parse.unquote(title))
+
+
 def youtube_search(query, maxres, recs=False):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=cfg.YOUTUBE_API_KEY)
 
@@ -63,8 +71,8 @@ def youtube_search(query, maxres, recs=False):
     for search_result in search_response.get('items', []):
         if search_result['id']['kind'] == 'youtube#video':
             videos.append((search_result['id']['videoId'],
-            search_result['snippet']['title'],
-            urllib.parse.quote(search_result['snippet']['title'])))
+                           search_result['snippet']['title'],
+                           urlEnc(search_result['snippet']['title'])))
 
     return videos
 
@@ -87,13 +95,13 @@ def index(keyword):
 @view('templates/results')
 def index(ytid, title):
     vids = youtube_search(ytid, 50, True)
-    return dict(videos=vids, header='Recommendations', subheader='Based on: '+title)
+    return dict(videos=vids, header='Recommendations', subheader='Based on: '+urlDec(title))
 
 
 @route('/add/<ytid>/<title>')
 @view('templates/added')
 def index(ytid, title):
-    queue.append((ytid, title, title))
+    queue.append((ytid, urlDec(title), title))
     return dict()
 
 
