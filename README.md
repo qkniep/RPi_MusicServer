@@ -8,10 +8,11 @@ This software requires Python 3 and the following Python libraries to be install
 * [python-mpv](https://github.com/jaseg/python-mpv) 0.3.9
 
 ## Setup
-You need to write a `cfg.py` file like the following:
+You need to write a `config.py` file like the following:
 ```ini
 HOST_NAME = 'XXX.XXX.XXX.XXX'
 PORT_NUMBER = 7000
+SERVER_TYPE = 'wsgiref'
 
 YOUTUBE_API_KEY = 'AIza...'
 ```

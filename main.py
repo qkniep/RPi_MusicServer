@@ -3,40 +3,37 @@
 # Copyright 2019 Quentin Kniep <hello@quentinkniep.com>
 # Distributed under terms of the MIT license.
 
-from bottle import redirect, route, run, template, view
-from googleapiclient.discovery import build
-from threading import Thread
-
-import mpv
-import os
+from bottle import redirect, route, run, view
+from googleapiclient.discovery import build as buildYT
+from mpv import MPV
 import pafy
-import time
+
+from os.path import isfile
+from threading import Thread
+from time import sleep
 import urllib.parse
 
-import cfg
+import config
 
 
-YOUTUBE_API_SERVICE_NAME = 'youtube'
-YOUTUBE_API_VERSION = 'v3'
-
-player = mpv.MPV(ytdl=True, video=False)
-youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=cfg.YOUTUBE_API_KEY)
+player = MPV(ytdl=True, video=False)
+youtube = buildYT('youtube', 'v3', developerKey=config.YOUTUBE_API_KEY)
 
 queue = [['CFUnR8p_uks', 'Axel - Sun Down', 'Axel - Sun Down', False]]
 currentlyPlaying = ['vzYYW8V3Ibc', 'Nothing', 'Nothing', False]
-sitcomEffects = [
-        'iYVO5bUFww0',  # laughter
-        'RktX4lbe_g4',  # awkward crickets
-        '7ODcC5z6Ca0',  # sad violin
-        'mVqwnMc1E5M',  # ooooh
-        '6zXDo4dL7SU',  # ba dum tsss
-        'n67YJ7ICh_Q',  # karnevals tusch
-        '5jcOgP-zeTg',  # gasp
-        'y1U6g-kJ5og',  # booing
-        'HnK28w1soPg',  # Kim Possible
-        'cphNpqKpKc4',  # dun dun dunnn
-        'Q100Dgdl_rU',  # sarcastic laugh
-        'Gyu82WG_edM'   # clapping
+soundEffects = [
+        ('iYVO5bUFww0', 'Laughter'),
+        ('RktX4lbe_g4', 'Awkward Crickets'),
+        ('7ODcC5z6Ca0', 'Sad Violin'),
+        ('mVqwnMc1E5M', 'Oooohh'),
+        ('6zXDo4dL7SU', 'Ba Dum Tsss'),
+        ('n67YJ7ICh_Q', 'Karnevals Tusch'),
+        ('5jcOgP-zeTg', 'Gasp'),
+        ('y1U6g-kJ5og', 'Booing'),
+        ('HnK28w1soPg', 'Kimmunicator'),
+        ('cphNpqKpKc4', 'Dun Dun Dunnn'),
+        ('Q100Dgdl_rU', 'Sarcastic Laugh'),
+        ('Gyu82WG_edM', 'Applause'),
 ]
 
 
@@ -109,7 +106,7 @@ def index(ytid, title):
 @view('templates/added')
 def index(ytid, title):
     alreadyDownloaded = False
-    if os.path.isfile('downloads/'+ytid):
+    if isfile('downloads/'+ytid):
         alreadyDownloaded = True
     queue.append([ytid, urlDec(title), title, alreadyDownloaded])
     return dict()
@@ -138,12 +135,10 @@ def index(vol):
 
 
 def play(ytid):
-    player.play('https://youtu.be/' + ytid)
-    player.wait_for_playback()
-
-
-def playFile(ytid):
-    player.play('downloads/'+ytid)
+    path = 'downloads/' + ytid
+    if not isfile(path):
+        download(ytid)
+    player.play(path)
     player.wait_for_playback()
 
 
@@ -154,12 +149,12 @@ def playLoop():
             currentlyPlaying = youtubeSearch(currentlyPlaying[0], 10, recs=True)[0]
             play(currentlyPlaying[0])
         else:
-            if queue[0][3] == '':  # wait for download to finish
-                time.sleep(1)
+            if not queue[0][3]:  # wait for download to finish
+                sleep(1)
                 continue
             currentlyPlaying = queue[0]
             del queue[0]
-            playFile(currentlyPlaying[0])
+            play(currentlyPlaying[0])
 
 
 def downloadLoop():
@@ -168,7 +163,7 @@ def downloadLoop():
             if not queue[i][3]:
                 download(queue[i][0])
                 queue[i][3] = True
-        time.sleep(1)
+        sleep(1)
 
 
 if __name__ == '__main__':
@@ -178,5 +173,5 @@ if __name__ == '__main__':
     downloadThread = Thread(target=downloadLoop)
     downloadThread.start()
 
-    pafy.set_api_key(cfg.YOUTUBE_API_KEY)
-    run(host=cfg.HOST_NAME, port=cfg.PORT_NUMBER)
+    pafy.set_api_key(config.YOUTUBE_API_KEY)
+    run(host=config.HOST_NAME, port=config.PORT_NUMBER, server=config.SERVER_TYPE)
