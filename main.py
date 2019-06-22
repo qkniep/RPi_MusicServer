@@ -120,6 +120,7 @@ def index():
 
 @route('/skip')
 def index():
+    player.seek(100, 'absolute-percent')
     return redirect('/')
 
 
