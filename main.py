@@ -9,7 +9,6 @@ from threading import Thread
 
 import mpv
 import pafy
-import random
 import time
 import urllib.parse
 
@@ -20,9 +19,10 @@ YOUTUBE_API_SERVICE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
 player = mpv.MPV(ytdl=True, video=False)
+youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=cfg.YOUTUBE_API_KEY)
 
-queue = []
-currentlyPlaying = ['vzYYW8V3Ibc', 'Nothing', 'Nothing']
+queue = [('CFUnR8p_uks', 'Axel - Sun Down', 'Axel - Sun Down')]
+currentlyPlaying = ('vzYYW8V3Ibc', 'Nothing', 'Nothing')
 sitcomEffects = [
         'iYVO5bUFww0',  # laughter
         'RktX4lbe_g4',  # awkward crickets
@@ -47,9 +47,7 @@ def urlDec(title):
     return urllib.parse.unquote(urllib.parse.unquote(title))
 
 
-def youtube_search(query, maxres, recs=False):
-    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=cfg.YOUTUBE_API_KEY)
-
+def youtubeSearch(query, maxres, recs=False):
     if recs:
         search_response = youtube.search().list(
             relatedToVideoId=query,
@@ -94,14 +92,14 @@ def index():
 @route('/search/<keyword>')
 @view('templates/results')
 def index(keyword):
-    vids = youtube_search(keyword, 50)
+    vids = youtubeSearch(keyword, 50)
     return dict(videos=vids, header='Search Results', subheader='For: '+keyword)
 
 
 @route('/rec/<ytid>/<title>')
 @view('templates/results')
 def index(ytid, title):
-    vids = youtube_search(ytid, 50, recs=True)
+    vids = youtubeSearch(ytid, 50, recs=True)
     return dict(videos=vids, header='Recommendations', subheader='Based on: '+urlDec(title))
 
 
@@ -143,8 +141,8 @@ def playLoop():
     global currentlyPlaying
     while True:
         if not queue:
-            effect = random.choice(sitcomEffects)
-            play(effect)
+            currentlyPlaying = youtubeSearch(currentlyPlaying[0], 10, recs=True)[0]
+            play(currentlyPlaying[0])
         else:
             currentlyPlaying = queue[0]
             del queue[0]
