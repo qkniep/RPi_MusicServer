@@ -8,6 +8,7 @@ from googleapiclient.discovery import build
 from threading import Thread
 
 import mpv
+import os
 import pafy
 import time
 import urllib.parse
@@ -21,8 +22,8 @@ YOUTUBE_API_VERSION = 'v3'
 player = mpv.MPV(ytdl=True, video=False)
 youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=cfg.YOUTUBE_API_KEY)
 
-queue = [('CFUnR8p_uks', 'Axel - Sun Down', 'Axel - Sun Down')]
-currentlyPlaying = ('vzYYW8V3Ibc', 'Nothing', 'Nothing')
+queue = [['CFUnR8p_uks', 'Axel - Sun Down', 'Axel - Sun Down', False]]
+currentlyPlaying = ['vzYYW8V3Ibc', 'Nothing', 'Nothing', False]
 sitcomEffects = [
         'iYVO5bUFww0',  # laughter
         'RktX4lbe_g4',  # awkward crickets
@@ -69,9 +70,9 @@ def youtubeSearch(query, maxres, recs=False):
 
     for search_result in search_response.get('items', []):
         if search_result['id']['kind'] == 'youtube#video':
-            videos.append((search_result['id']['videoId'],
+            videos.append([search_result['id']['videoId'],
                            search_result['snippet']['title'],
-                           urlEnc(search_result['snippet']['title'])))
+                           urlEnc(search_result['snippet']['title'])])
 
     return videos
 
@@ -79,7 +80,8 @@ def youtubeSearch(query, maxres, recs=False):
 def download(ytid):
     v = pafy.new(ytid)
     s = v.getbest()
-    filename = s.download()
+    filename = s.download(filepath='downloads/'+ytid)
+    print('DOWNLOADED ' + ytid + ' into ' + filename)
     return filename
 
 
@@ -106,7 +108,10 @@ def index(ytid, title):
 @route('/add/<ytid>/<title>')
 @view('templates/added')
 def index(ytid, title):
-    queue.append((ytid, urlDec(title), title))
+    alreadyDownloaded = False
+    if os.path.isfile('downloads/'+ytid):
+        alreadyDownloaded = True
+    queue.append([ytid, urlDec(title), title, alreadyDownloaded])
     return dict()
 
 
@@ -137,6 +142,11 @@ def play(ytid):
     player.wait_for_playback()
 
 
+def playFile(ytid):
+    player.play('downloads/'+ytid)
+    player.wait_for_playback()
+
+
 def playLoop():
     global currentlyPlaying
     while True:
@@ -144,13 +154,29 @@ def playLoop():
             currentlyPlaying = youtubeSearch(currentlyPlaying[0], 10, recs=True)[0]
             play(currentlyPlaying[0])
         else:
+            if queue[0][3] == '':  # wait for download to finish
+                time.sleep(1)
+                continue
             currentlyPlaying = queue[0]
             del queue[0]
-            play(currentlyPlaying[0])
+            playFile(currentlyPlaying[0])
+
+
+def downloadLoop():
+    while True:
+        for i in range(len(queue)):
+            if not queue[i][3]:
+                download(queue[i][0])
+                queue[i][3] = True
+        time.sleep(1)
 
 
 if __name__ == '__main__':
-    t = Thread(target=playLoop)
-    t.start()
-    #pafy.set_api_key(cfg.YOUTUBE_API_KEY)
+    playThread = Thread(target=playLoop)
+    playThread.start()
+
+    downloadThread = Thread(target=downloadLoop)
+    downloadThread.start()
+
+    pafy.set_api_key(cfg.YOUTUBE_API_KEY)
     run(host=cfg.HOST_NAME, port=cfg.PORT_NUMBER)
