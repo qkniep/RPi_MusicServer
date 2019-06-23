@@ -91,6 +91,7 @@ def index():
 @route('/search/<keyword>')
 @view('templates/results')
 def index(keyword):
+    keyword = urlDec(keyword)
     vids = youtubeSearch(keyword, 50)
     return dict(videos=vids, header='Search Results', subheader='For: '+keyword)
 
@@ -98,17 +99,19 @@ def index(keyword):
 @route('/rec/<ytid>/<title>')
 @view('templates/results')
 def index(ytid, title):
+    title = urlDec(title)
     vids = youtubeSearch(ytid, 50, recs=True)
-    return dict(videos=vids, header='Recommendations', subheader='Based on: '+urlDec(title))
+    return dict(videos=vids, header='Recommendations', subheader='Based on: '+title)
 
 
 @route('/add/<ytid>/<title>')
 @view('templates/added')
 def index(ytid, title):
+    title = urlDec(title)
     alreadyDownloaded = False
     if isfile('downloads/'+ytid):
         alreadyDownloaded = True
-    queue.append([ytid, urlDec(title), title, alreadyDownloaded])
+    queue.append([ytid, title, urlEnc(title), alreadyDownloaded])
     return dict()
 
 

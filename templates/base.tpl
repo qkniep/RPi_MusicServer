@@ -31,7 +31,7 @@
 		$(document).ready(function() {
 			$('#searchForm').submit(function(){
 				var query = $('#search').val();
-				$(this).attr('action', "/search/" + query);
+				$(this).attr('action', "/search/" + encodeURIComponent(encodeURIComponent(query)));
 			});
 		});
 	</script>
