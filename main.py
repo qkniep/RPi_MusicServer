@@ -3,23 +3,24 @@
 # Copyright 2019 Quentin Kniep <hello@quentinkniep.com>
 # Distributed under terms of the MIT license.
 
+import os.path
+from threading import Thread
+import time
+import urllib.parse
+
 from bottle import redirect, route, run, view
-from googleapiclient.discovery import build as buildYT
+import ffmpeg_normalize
+import googleapiclient.discovery as google
 from mpv import MPV
 import pafy
-
-from os.path import isfile
-from threading import Thread
-from time import sleep
-import urllib.parse
 
 import config
 
 
 player = MPV(ytdl=True, video=False)
-youtube = buildYT('youtube', 'v3', developerKey=config.YOUTUBE_API_KEY)
+youtube = google.build('youtube', 'v3', developerKey=config.YOUTUBE_API_KEY)
 
-queue = [['CFUnR8p_uks', 'Axel - Sun Down', 'Axel - Sun Down', False]]
+queue = [['_KhsQ3nn6Kw', 'Wankelmut & Emma Louise - My Head Is A Jungle (MK Remix)', '', True]]
 currentlyPlaying = ['vzYYW8V3Ibc', 'Nothing', 'Nothing', False]
 soundEffects = [
         ('iYVO5bUFww0', 'Laughter'),
@@ -77,8 +78,21 @@ def youtubeSearch(query, maxres, recs=False):
 def download(ytid):
     v = pafy.new(ytid)
     s = v.getbest()
-    filename = s.download(filepath='downloads/'+ytid)
+    filename = None
+    while filename == None:
+        try:
+            filename = s.download(filepath='downloads/'+ytid)
+        except:
+            pass
     print('DOWNLOADED ' + ytid + ' into ' + filename)
+
+    if config.ENABLE_VOLUME_NORMALIZATION:
+        ffmpnorm = ffmpeg_normalize._ffmpeg_normalize.FFmpegNormalize(
+                audio_codec='libmp3lame', output_format='mp3',
+                video_disable=True, subtitle_disable=True, target_level=-13)
+        ffmpnorm.add_media_file('downloads/'+ytid, 'downloads/'+ytid)
+        ffmpnorm.run_normalization()
+        print('NORMALIZED' + ytid)
     return filename
 
 
@@ -109,7 +123,7 @@ def index(ytid, title):
 def index(ytid, title):
     title = urlDec(title)
     alreadyDownloaded = False
-    if isfile('downloads/'+ytid):
+    if os.path.isfile('downloads/'+ytid):
         alreadyDownloaded = True
     queue.append([ytid, title, urlEnc(title), alreadyDownloaded])
     return dict()
@@ -139,7 +153,7 @@ def index(vol):
 
 def play(ytid):
     path = 'downloads/' + ytid
-    if not isfile(path):
+    if not os.path.isfile(path):
         download(ytid)
     player.play(path)
     player.wait_for_playback()
@@ -153,7 +167,7 @@ def playLoop():
             play(currentlyPlaying[0])
         else:
             if not queue[0][3]:  # wait for download to finish
-                sleep(1)
+                time.sleep(1)
                 continue
             currentlyPlaying = queue[0]
             del queue[0]
@@ -166,7 +180,7 @@ def downloadLoop():
             if not queue[i][3]:
                 download(queue[i][0])
                 queue[i][3] = True
-        sleep(1)
+        time.sleep(1)
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@
 			M.toast({html: 'Added to Queue.<button class=\'btn-flat toast-action\'>Undo</button>'});
 		});" class="collection-item grey darken-4" style="border-bottom-color: transparent"><div>
 			<img src="https://img.youtube.com/vi/{{vid[0]}}/default.jpg" style="display: inline-block; vertical-align: text-top">
-			<span>{{vid[1]}}</span>
+			<span>{{!vid[1]}}</span>
 			<a href="/rec/{{vid[0]}}/{{vid[2]}}" class="secondary-content">
 				<i class="material-icons">more_horiz</i>
 			</a>
