@@ -6,6 +6,7 @@ This software requires Python 3 and the following Python libraries to be install
 * [Google API Client](https://googleapis.github.io/google-api-python-client) 1.7.9
 * [Pafy](https://pypi.org/project/pafy) 0.5.4
 * [python-mpv](https://github.com/jaseg/python-mpv) 0.3.9
+
 Highly recommended, but not stricly necessary is: 
 * [Paste](https://pypi.org/project/Paste) 3.0.8
 
