@@ -1,4 +1,4 @@
-% rebase('templates/base.tpl', title='Queue', refresh=True)
+% rebase('templates/base.tpl', title='Queue')
 <div style="padding-left:20px">
 	<h4 style="display:inline-block">Currently Playing: {{!current[1]}}</h4>
 	<a href="/skip"><i class="material-icons">skip_next</i></a>

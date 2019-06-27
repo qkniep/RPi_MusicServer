@@ -6,9 +6,6 @@
 
 	<title>{{title or 'No title'}}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	%if refresh:
-	<meta http-equiv="refresh" content="1">
-	%end
 </head>
 <body class="grey darken-4 white-text">
 	<nav class="grey darken-3" style="vertical-align: middle">
