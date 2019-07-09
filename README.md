@@ -12,7 +12,7 @@ With this project I aim to provide a software which can be hosted on a Raspberry
 
 ## Dependencies
 This software requires Python 3 and the following Python libraries to be installed:
-* [Bottle](https://bottlepy.org/docs/dev) 0.12.16
+* [Bottle](https://bottlepy.org/docs/stable) 0.12.16
 * [Google API Client](https://googleapis.github.io/google-api-python-client) 1.7.9
 * [Pafy](https://pypi.org/project/pafy) 0.5.4
 * [python-mpv](https://github.com/jaseg/python-mpv) 0.3.9
