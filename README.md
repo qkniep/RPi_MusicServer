@@ -1,4 +1,14 @@
 # YouTube Music Server for Raspberry Pi
+With this project I aim to provide a software which can be hosted on a Raspberry Pi and operates as a collaborative music server. The server can be accessed via a web browser from any device which can communicate with the RPi over the internet. I am also working on advanced features to provide a better collaborative experience.
+
+## Features / Roadmap
+* [x] YouTube Search
+* [x] Auto-Play Recommendations
+* [x] Collaborative Queue
+* [ ] Playlists
+* [ ] Security Measures
+* [ ] Song Voting
+* [ ] Automatic Volume Adjustment
 
 ## Dependencies
 This software requires Python 3 and the following Python libraries to be installed:
