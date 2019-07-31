@@ -92,7 +92,8 @@ def download(ytid):
                 video_disable=True, subtitle_disable=True, target_level=-13)
         ffmpnorm.add_media_file('downloads/'+ytid, 'downloads/'+ytid)
         ffmpnorm.run_normalization()
-        print('NORMALIZED' + ytid)
+        print('NORMALIZED ' + ytid)
+
     return filename
 
 
