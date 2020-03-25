@@ -7,20 +7,23 @@ I am also working on advanced features to provide a better collaborative experie
 * [x] YouTube Search
 * [x] Auto-Play Recommendations
 * [x] Collaborative Queue
+* [ ] Spotify Search
 * [ ] Playlists
 * [ ] Security Measures
 * [ ] Song Voting
-* [ ] Automatic Volume Adjustment
+* [ ] Automatic Volume Adjustment (YT)
+* [ ] Mix Playlists
 
 ## Dependencies
 This software requires Python 3 and the following Python libraries to be installed:
-* [Bottle](https://bottlepy.org/docs/stable) 0.12.16
-* [Google API Client](https://googleapis.github.io/google-api-python-client) 1.7.9
-* [Pafy](https://pypi.org/project/pafy) 0.5.4
-* [python-mpv](https://github.com/jaseg/python-mpv) 0.3.9
+* [Bottle](https://bottlepy.org/docs/stable) 0.12.18
+* [Google API Client](https://googleapis.github.io/google-api-python-client) 1.8.0
+* [Pafy](https://pypi.org/project/pafy) 0.5.5
+* [python-mpv](https://github.com/jaseg/python-mpv) 0.4.5
+* [spotipy](https://github.com/plamere/spotipy) 2.10.0
 
-Highly recommended, but not stricly necessary is: 
-* [Paste](https://pypi.org/project/Paste) 3.0.8
+Highly recommended, but not stricly necessary is:
+* [Paste](https://pypi.org/project/Paste) 3.4.0
 
 ## Setup
 You need to write a `config.py` file like the following:
