@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# Copyright 2019 Quentin Kniep <hello@quentinkniep.com>
+# Copyright 2020 Quentin Kniep <hello@quentinkniep.com>
 # Distributed under terms of the MIT license.
 
 import os.path
@@ -13,29 +13,45 @@ import ffmpeg_normalize
 import googleapiclient.discovery as google
 from mpv import MPV
 import pafy
+import spotipy
 
 import config
 
 
 player = MPV(ytdl=True, video=False)
 youtube = google.build('youtube', 'v3', developerKey=config.YOUTUBE_API_KEY)
+sp_oauth = spotipy.oauth2.SpotifyOAuth(config.SPOTIPY_CLIENT_ID,
+                                       SPOTIPY_CLIENT_SECRET,
+                                       SPOTIPY_REDIRECT_URI,
+                                       scope=SPOTIPY_SCOPE,
+                                       cache_path=SPOTIPY_CACHE)
 
 queue = [['_KhsQ3nn6Kw', 'Wankelmut & Emma Louise - My Head Is A Jungle (MK Remix)', '', True]]
 currentlyPlaying = ['vzYYW8V3Ibc', 'Nothing', 'Nothing', False]
-soundEffects = [
-        ('iYVO5bUFww0', 'Laughter'),
-        ('RktX4lbe_g4', 'Awkward Crickets'),
-        ('7ODcC5z6Ca0', 'Sad Violin'),
-        ('mVqwnMc1E5M', 'Oooohh'),
-        ('6zXDo4dL7SU', 'Ba Dum Tsss'),
-        ('n67YJ7ICh_Q', 'Karnevals Tusch'),
-        ('5jcOgP-zeTg', 'Gasp'),
-        ('y1U6g-kJ5og', 'Booing'),
-        ('HnK28w1soPg', 'Kimmunicator'),
-        ('cphNpqKpKc4', 'Dun Dun Dunnn'),
-        ('Q100Dgdl_rU', 'Sarcastic Laugh'),
-        ('Gyu82WG_edM', 'Applause'),
-]
+
+
+def playLoop():
+    global currentlyPlaying
+    while True:
+        if not queue:
+            currentlyPlaying = youtubeSearch(currentlyPlaying[0], 10, recs=True)[0]
+            play(currentlyPlaying[0])
+        else:
+            if not queue[0][3]:  # wait for download to finish
+                time.sleep(1)
+                continue
+            currentlyPlaying = queue[0]
+            del queue[0]
+            play(currentlyPlaying[0])
+
+
+def downloadLoop():
+    while True:
+        for i in range(len(queue)):
+            if not queue[i][3]:
+                download(queue[i][0])
+                queue[i][3] = True
+        time.sleep(1)
 
 
 def urlEnc(title):
@@ -158,30 +174,6 @@ def play(ytid):
         download(ytid)
     player.play(path)
     player.wait_for_playback()
-
-
-def playLoop():
-    global currentlyPlaying
-    while True:
-        if not queue:
-            currentlyPlaying = youtubeSearch(currentlyPlaying[0], 10, recs=True)[0]
-            play(currentlyPlaying[0])
-        else:
-            if not queue[0][3]:  # wait for download to finish
-                time.sleep(1)
-                continue
-            currentlyPlaying = queue[0]
-            del queue[0]
-            play(currentlyPlaying[0])
-
-
-def downloadLoop():
-    while True:
-        for i in range(len(queue)):
-            if not queue[i][3]:
-                download(queue[i][0])
-                queue[i][3] = True
-        time.sleep(1)
 
 
 if __name__ == '__main__':
