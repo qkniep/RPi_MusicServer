@@ -1,7 +1,7 @@
 # YouTube Music Server for Raspberry Pi
 
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/quality/g/qkniep/RPi_MusicServer)](https://scrutinizer-ci.com/g/qkniep/RPi_MusicServer)
-[![Code Climate Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/qkniep/RPi_MusicServer/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/3acb1089cfdb0a59eb34/maintainability)](https://codeclimate.com/github/qkniep/RPi_MusicServer/maintainability)
 [![CodeFactor](https://www.codefactor.io/repository/github/qkniep/rpi_musicserver/badge)](https://www.codefactor.io/repository/github/qkniep/rpi_musicserver)
 
 With this project I aim to provide a software which can be hosted on a Raspberry Pi and operates as a collaborative music server.
