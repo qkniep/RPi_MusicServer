@@ -1,4 +1,6 @@
-# YouTube Music Server for Raspberry Pi
+# Music Server for Raspberry Pi
+
+Works with YouTube and Spotify.
 
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/quality/g/qkniep/RPi_MusicServer)](https://scrutinizer-ci.com/g/qkniep/RPi_MusicServer)
 [![Maintainability](https://api.codeclimate.com/v1/badges/3acb1089cfdb0a59eb34/maintainability)](https://codeclimate.com/github/qkniep/RPi_MusicServer/maintainability)
@@ -13,26 +15,30 @@ I am also working on advanced features to provide a better collaborative experie
 * [x] Auto-Play Recommendations
 * [x] Collaborative Queue
 * [ ] Spotify Search
+* [ ] Default Config
+* [ ] Config in YAML, TOML, JSON, or something
 * [ ] Playlists
-* [ ] Security Measures
+* [ ] Security Measures (Authentication)
 * [ ] Song Voting
 * [ ] Automatic Volume Adjustment (YT)
 * [ ] Mix Playlists
 
 ## Dependencies
-This software requires Python 3 and the following Python libraries to be installed:
+This software requires Python 3 and the following Python libraries:
 * [Bottle](https://bottlepy.org/docs/stable) 0.12.18
-* [Google API Client](https://googleapis.github.io/google-api-python-client) 1.8.0
-* [Pafy](https://pypi.org/project/pafy) 0.5.5
-* [python-mpv](https://github.com/jaseg/python-mpv) 0.4.5
-* [spotipy](https://github.com/plamere/spotipy) 2.10.0
+* [Google API Client](https://googleapis.github.io/google-api-python-client) 1.10.0
+* [Pafy](https://pypi.org/project/pafy)
+* [python-mpv](https://github.com/jaseg/python-mpv) 0.5.2
+* [spotipy](https://github.com/plamere/spotipy) 2.13.0
 
 Highly recommended, but not stricly necessary is:
-* [Paste](https://pypi.org/project/Paste) 3.4.0
+* [Paste](https://pypi.org/project/Paste) 3.4.3
+
+**All Depencies can be installed through pipenv.**
 
 ## Setup
 You need to write a `config.py` file like the following:
-```ini
+```python
 HOST_NAME = 'XXX.XXX.XXX.XXX'
 PORT_NUMBER = 7000
 SERVER_TYPE = 'paste'
@@ -58,4 +64,4 @@ Whereas the `supervise` command will automatically relaunch the server if/when i
 Therefore the command above should lead to the server being up until you explicitly decide to kill the program.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the [MIT License](LICENSE).

@@ -4,9 +4,19 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
+jedi = "*"
 
 [packages]
 bottle = "*"
+google-api-python-client = "*"
+python-mpv = "*"
+pafy = "*"
+paste = "*"
+spotipy = "*"
+ffmpeg-normalize = "*"
+youtube-dl = "*"
+flask = "*"
 
 [requires]
 python_version = "3.8"
