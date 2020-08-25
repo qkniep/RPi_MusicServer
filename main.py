@@ -5,57 +5,21 @@
 
 import os.path
 from threading import Thread
-import urllib.parse
 
 from flask import Flask, redirect, render_template, url_for
 import googleapiclient.discovery as google
 
 import config
+from util import url_dec, url_enc, YoutubeWrapper
 
 
 app = Flask(__name__)
-youtube = google.build('youtube', 'v3', developerKey=config.YOUTUBE_API_KEY)
-
-
-def url_enc(title):
-    return urllib.parse.quote(urllib.parse.quote(title, safe=''))
-
-
-def url_dec(title):
-    return urllib.parse.unquote(urllib.parse.unquote(title))
-
-
-def youtube_search(query, maxres, recs=False):
-    if recs:
-        search_response = youtube.search().list(
-            relatedToVideoId=query,
-            part='id,snippet',
-            maxResults=maxres,
-            type='video',
-            topicId='/m/04rlf',
-        ).execute()
-    else:
-        search_response = youtube.search().list(
-            q=query,
-            part='id,snippet',
-            maxResults=maxres,
-            type='video',
-            topicId='/m/04rlf',
-        ).execute()
-
-    videos = []
-
-    for search_result in search_response.get('items', []):
-        if search_result['id']['kind'] == 'youtube#video':
-            videos.append([search_result['id']['videoId'],
-                           search_result['snippet']['title'],
-                           url_enc(search_result['snippet']['title'])])
-    return videos
+youtube = YoutubeWrapper()
 
 
 @app.route('/')
 def index():
-    return render_template('main.html', videos=queue,
+    return render_template('index.html', videos=queue,
                            numVids=len(queue), current=currentlyPlaying,
                            # volume=int(player.volume))
                            volume=100)
@@ -64,7 +28,7 @@ def index():
 @app.route('/search/<keyword>')
 def search_results(keyword):
     keyword = url_dec(keyword)
-    vids = youtube_search(keyword, 50)
+    vids = youtube.search(keyword, 50)
     return render_template('results.html', videos=vids,
                            header='Search Results', subheader='For: '+keyword)
 
@@ -72,7 +36,7 @@ def search_results(keyword):
 @app.route('/rec/<ytid>/<title>')
 def yt_recommendations(ytid, title):
     title = url_dec(title)
-    vids = youtube_search(ytid, 50, recs=True)
+    vids = youtube.search(ytid, 50, recs=True)
     return render_template('results.html', videos=vids,
                            header='Recommendations',
                            subheader='Based on: '+title)

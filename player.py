@@ -3,7 +3,7 @@
 # Copyright © 2020 Quentin Kniep <hello@quentinkniep.com>
 # Distributed under terms of the MIT license.
 """Manages playback through multiple audio players.
-Currently supports: Spotify, MPV (for YouTube)
+Currently supports: Spotify, MPV (for YouTube).
 """
 
 import json
@@ -12,21 +12,21 @@ import time
 from threading import Thread
 
 import ffmpeg_normalize
-import googleapiclient.discovery as google
 from mpv import MPV
 import pafy
 import spotipy
 
 import config
+from util import YoutubeWrapper
 
 
 class Player:
     def __init__(self):
         self.queue = [['_KhsQ3nn6Kw', 'Wankelmut & Emma Louise - My Head Is A Jungle (MK Remix)', '', True]]
-        self.currently_playing = ['vzYYW8V3Ibc', 'Nothing', 'Nothing', False]
+        self.current_track = ['vzYYW8V3Ibc', 'Nothing', 'Nothing', False]
 
         self.player = MPV(ytdl=True, video=False)
-        self.youtube = google.build('youtube', 'v3', developerKey=config.YOUTUBE_API_KEY)
+        self.youtube = YoutubeWrapper()
 
         sp_oauth = spotipy.oauth2.SpotifyOAuth(scope=config.SPOTIPY_SCOPE,
                                                cache_path=config.SPOTIPY_CACHE)
@@ -44,7 +44,7 @@ class Player:
     def play_loop(self):
         while True:
             if not self.queue:
-                next_track = self.youtube_search(self.current_track[0], 1, recs=True)[0]
+                next_track = self.youtube.search(self.current_track[0], 1, recs=True)[0]
                 self.current_track = next_track
                 self.play(next_track[0])
             else:
@@ -64,12 +64,13 @@ class Player:
             time.sleep(1)
 
     def download(self, ytid):
-        v = pafy.new(ytid)
-        s = v.getbest()
+        video = pafy.new(ytid)
+        stream = video.getbestaudio()
         filename = None
         while filename is None:
             try:
-                filename = s.download(filepath='downloads/'+ytid)
+                filename = stream.download(filepath='downloads/'+ytid,
+                                           quiet=True)
             except:
                 pass
         print('DOWNLOADED ' + ytid + ' into ' + filename)
