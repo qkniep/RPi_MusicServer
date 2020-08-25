@@ -4,12 +4,9 @@
 # Distributed under terms of the MIT license.
 
 import os.path
-from threading import Thread
 
 from flask import Flask, redirect, render_template, url_for
-import googleapiclient.discovery as google
 
-import config
 from util import url_dec, url_enc, YoutubeWrapper
 
 
@@ -72,3 +69,7 @@ def remove_song(ytid):
 #     else:
 #         player.volume = vol
 #     return redirect(url_for('/'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
